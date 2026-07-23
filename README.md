@@ -17,6 +17,18 @@
 
 ![PicoCrypt-CN 界面](docs/screenshot.png)
 
+## 与原版的主要区别
+
+- 使用 Wails 3 重新实现界面
+- 默认支持中文界面，并可切换英文
+- 增加了设置功能（记住选项状态、默认输出目录）
+- 体积比原版更大（约 10MB，原版约 3MB）
+- 处理速度较原版略慢（约 3MB/s）
+
+## 致谢
+
+本项目加密核心基于 [Picocrypt](https://github.com/Picocrypt/Picocrypt) 原版代码移植，感谢原作者的工作与开源贡献。
+
 ## 下载
 
 请到 [Releases](https://github.com/bliey/PicoCrypt-CN/releases) 页面下载最新版本的 `PicoCrypt-CN.exe`。
