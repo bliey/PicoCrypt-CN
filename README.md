@@ -1,4 +1,4 @@
-# PicoCrypt-CN
+# PicoCrypt-CN PicoCrypt中文版
 
 基于 [Picocrypt](https://github.com/Picocrypt/Picocrypt) 使用 Wails 3 重制的桌面版加密工具。
 
