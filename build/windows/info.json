@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "1.0.0"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "1.0.0",
+			"CompanyName": "PicoCrypt-CN",
+			"FileDescription": "PicoCrypt-CN 文件加密工具",
+			"LegalCopyright": "© 2026, PicoCrypt-CN",
+			"ProductName": "PicoCrypt-CN",
+			"Comments": "PicoCrypt-CN 文件加密工具"
+		}
+	}
+}

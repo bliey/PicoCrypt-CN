@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/style.css"/>
+    <title>PicoCrypt-CN</title>
+</head>
+<body data-file-drop-target>
+<main class="container">
+
+    <!-- 输入区 -->
+    <div class="row">
+        <span id="inputLabel" class="input-label">将文件或文件夹拖入此窗口</span>
+        <button id="btnClear" class="btn small" data-i18n="clear">清除</button>
+    </div>
+    <div class="row">
+        <button id="btnPickFiles" class="btn small" data-i18n="pickFiles">选择文件</button>
+        <button id="btnPickFolder" class="btn small" data-i18n="pickFolder">选择文件夹</button>
+    </div>
+
+    <!-- 密码 -->
+    <div class="row label-row"><span data-i18n="password">密码：</span>
+        <span class="spacer"></span>
+        <button id="btnTogglePw" class="btn tiny">显示</button>
+        <button id="btnClearPw" class="btn tiny" data-i18n="clear">清除</button>
+        <button id="btnCopyPw" class="btn tiny" data-i18n="copy">复制</button>
+        <button id="btnPastePw" class="btn tiny" data-i18n="paste">粘贴</button>
+        <button id="btnGenPw" class="btn tiny" data-i18n="generate">生成</button>
+    </div>
+    <input id="password" type="password" autocomplete="off"/>
+    <div class="strength"><div id="strengthBar" class="strength-bar"></div><span id="strengthText" class="strength-text"></span></div>
+
+    <!-- 密码生成器 -->
+    <div id="passgen" class="panel hidden">
+        <div class="row"><span data-i18n="length">长度：</span><input id="pgLength" type="range" min="12" max="64" value="32"/><span id="pgLengthText">32</span></div>
+        <div class="row">
+            <label><input type="checkbox" id="pgUpper" checked/> <span data-i18n="upper">大写</span></label>
+            <label><input type="checkbox" id="pgLower" checked/> <span data-i18n="lower">小写</span></label>
+            <label><input type="checkbox" id="pgNums" checked/> <span data-i18n="nums">数字</span></label>
+            <label><input type="checkbox" id="pgSymbols" checked/> <span data-i18n="symbols">符号</span></label>
+            <label><input type="checkbox" id="pgCopy" checked/> <span data-i18n="copyToClipboard">复制到剪贴板</span></label>
+        </div>
+        <div class="row">
+            <button id="pgCancel" class="btn small" data-i18n="cancel">取消</button>
+            <button id="pgGenerate" class="btn small primary" data-i18n="generate">生成</button>
+        </div>
+    </div>
+
+    <!-- 确认密码 -->
+    <div id="confirmBlock">
+        <div class="row label-row"><span data-i18n="confirmPassword">确认密码：</span><span id="matchText" class="match"></span></div>
+        <input id="cpassword" type="password" autocomplete="off"/>
+    </div>
+
+    <!-- 密钥文件 -->
+    <div class="row label-row"><span data-i18n="keyfiles">密钥文件：</span>
+        <span class="spacer"></span>
+        <button id="btnKeyfile" class="btn tiny" data-i18n="manage">管理</button>
+        <button id="btnCreateKeyfile" class="btn tiny" data-i18n="create">创建</button>
+    </div>
+    <div id="keyfileLabel" class="muted">未选择</div>
+    <div id="keyfilePanel" class="panel hidden">
+        <div class="muted" data-i18n="keyfileHint">将密钥文件拖入窗口，或点击按钮添加。解密时顺序需与加密时一致（如勾选）。</div>
+        <div class="row" id="keyfileOrderedRow">
+            <label><input type="checkbox" id="keyfileOrdered"/> <span data-i18n="requireOrder">要求正确顺序</span></label>
+        </div>
+        <div id="keyfileOrderedHint" class="row hidden muted" data-i18n="orderRequired">此卷要求密钥文件按正确顺序提供</div>
+        <ul id="keyfileList" class="keyfile-list"></ul>
+        <div class="row">
+            <button id="btnAddKeyfile" class="btn small" data-i18n="add">添加</button>
+            <button id="btnClearKeyfiles" class="btn small" data-i18n="clear">清除</button>
+            <button id="btnKeyfileDone" class="btn small primary" data-i18n="done">完成</button>
+        </div>
+    </div>
+
+    <!-- 注释 -->
+    <div class="row label-row"><span data-i18n="comments">注释：</span><span class="muted" data-i18n="commentsNote">（注释不会被加密）</span></div>
+    <textarea id="comments" rows="2"></textarea>
+
+    <!-- 高级选项（加密） -->
+    <div id="advEncrypt" class="panel">
+        <div class="row label-row"><span data-i18n="advanced">高级选项：</span></div>
+        <div class="grid">
+            <label><input type="checkbox" id="optParanoid"/> <span data-i18n="paranoid">偏执模式</span></label>
+            <label><input type="checkbox" id="optCompress"/> <span data-i18n="compress">压缩文件</span></label>
+            <label><input type="checkbox" id="optReedsolo"/> <span data-i18n="reedsolo">Reed-Solomon</span></label>
+            <label><input type="checkbox" id="optDelete"/> <span data-i18n="deleteFiles">删除原文件</span></label>
+            <label><input type="checkbox" id="optDeniability"/> <span data-i18n="deniability">弱化文件特征</span></label>
+            <label><input type="checkbox" id="optRecursively"/> <span data-i18n="recursively">递归加密</span></label>
+        </div>
+        <div class="row">
+            <label><input type="checkbox" id="optSplit"/> <span data-i18n="split">分卷：</span></label>
+            <input id="splitSize" type="number" min="1" class="split-size"/>
+            <select id="splitUnit">
+                <option value="0">KiB</option>
+                <option value="1" selected>MiB</option>
+                <option value="2">GiB</option>
+                <option value="3">TiB</option>
+                <option value="4" data-i18n="totalAvg">Total（均分）</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 高级选项（解密） -->
+    <div id="advDecrypt" class="panel hidden">
+        <div class="row label-row"><span data-i18n="advanced">高级选项：</span></div>
+        <div class="grid">
+            <label><input type="checkbox" id="optKeep"/> <span data-i18n="keep">强制解密</span></label>
+            <label><input type="checkbox" id="optDeleteVol"/> <span data-i18n="deleteVol">删除卷</span></label>
+            <label><input type="checkbox" id="optAutoUnzip"/> <span data-i18n="autoUnzip">自动解压</span></label>
+            <label><input type="checkbox" id="optSameLevel"/> <span data-i18n="sameLevel">同级解压</span></label>
+        </div>
+    </div>
+
+    <!-- 输出 -->
+    <div class="row label-row"><span data-i18n="outputAs">输出保存为：</span>
+        <span class="spacer"></span>
+        <button id="btnOutput" class="btn tiny" data-i18n="change">更改</button>
+    </div>
+    <input id="outputFile" type="text" readonly/>
+
+    <!-- 开始 -->
+    <button id="btnStart" class="btn start">开始</button>
+
+    <!-- 状态 + 设置入口 -->
+    <div class="row">
+        <div id="status" class="status">就绪</div>
+        <span class="spacer"></span>
+        <button id="btnSettings" class="btn tiny" title="设置">⚙</button>
+    </div>
+
+    <!-- 覆盖确认 -->
+    <div id="overwritePanel" class="panel hidden">
+        <div data-i18n="overwriteQuestion">输出文件已存在，是否覆盖？</div>
+        <div class="row">
+            <button id="btnOverwriteNo" class="btn small" data-i18n="no">否</button>
+            <button id="btnOverwriteYes" class="btn small danger" data-i18n="yes">是</button>
+        </div>
+    </div>
+
+    <!-- 进度 -->
+    <div id="progressPanel" class="panel hidden">
+        <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+        <div id="progressText" class="muted">处理中…</div>
+        <div class="row"><button id="btnCancel" class="btn small danger" data-i18n="cancel">取消</button></div>
+    </div>
+
+</main>
+
+<!-- 设置面板（覆盖层） -->
+<div id="settingsPanel" class="overlay hidden">
+    <div class="row label-row"><span data-i18n="settings">设置</span>
+        <span class="spacer"></span>
+        <button id="setClose" class="btn tiny" data-i18n="close">关闭</button>
+    </div>
+    <div class="row">
+        <label><input type="checkbox" id="setRemember"/> <span data-i18n="rememberOptions">记住上次的选项状态</span></label>
+    </div>
+    <div class="row label-row"><span data-i18n="defaultDir">默认输出目录：</span></div>
+    <div class="row">
+        <input id="setDirPath" type="text" readonly/>
+    </div>
+    <div class="row">
+        <button id="setDirBtn" class="btn small" data-i18n="pickFolder">选择文件夹</button>
+        <button id="setDirClear" class="btn small" data-i18n="clear">清除</button>
+    </div>
+    <div class="row label-row"><span data-i18n="language">界面语言：</span></div>
+    <div class="row">
+        <select id="setLang">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+
+    <!-- 赞助 -->
+    <div class="row label-row sponsor-title"><span data-i18n="sponsor">赞助</span></div>
+    <div class="row sponsor-row">
+        <span class="sponsor-link" data-qr="alipay" data-i18n="alipay">支付宝</span>
+        <span class="sponsor-link" data-qr="wechat" data-i18n="wechat">微信</span>
+        <span class="sponsor-link" data-qr="paypal">PayPal</span>
+    </div>
+    <img id="sponsorQr" class="sponsor-qr hidden" alt=""/>
+
+    <!-- 版本信息 -->
+    <div class="muted version-line">PicoCrypt-CN v1.0.0</div>
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
